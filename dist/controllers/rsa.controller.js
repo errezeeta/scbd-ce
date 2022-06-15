@@ -35,11 +35,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signMsg = exports.getServerPubK = exports.generateBothKeys = void 0;
+exports.login = exports.signMsg = exports.getServerPubK = exports.generateBothKeys = void 0;
 const rsa_1 = require("@scbd/rsa");
 const bic = __importStar(require("bigint-conversion"));
 const data_1 = __importDefault(require("../data"));
 const index_1 = __importDefault(require("../index"));
+const users_1 = __importDefault(require("../models/users"));
 const bitLength = 1024;
 function generateBothKeys(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -86,4 +87,21 @@ function signMsg(req, res) {
     });
 }
 exports.signMsg = signMsg;
+function login(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const msg = (JSON.parse(JSON.stringify(req.body)));
+        var user = new users_1.default(msg.username, msg.password);
+        const check = data_1.default.find((obj) => {
+            return obj.username === user.username && obj.password === user.password;
+        });
+        if (check === undefined) {
+            const error = {
+                message: "Login failed"
+            };
+            return res.status(401).json(error);
+        }
+        return res.status(201).json({ "message": "login complete" });
+    });
+}
+exports.login = login;
 //# sourceMappingURL=rsa.controller.js.map

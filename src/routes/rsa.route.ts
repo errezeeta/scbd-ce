@@ -17,4 +17,10 @@ rsaRouter.route('/sign')
 rsaRouter.route('/sign')
 	.post(rsa.signMsg)
 
+rsaRouter.route('/login')
+	.get(rsa.login)
+rsaRouter.route('/login')
+	.post(rsa.login)
+
+	
 export default rsaRouter;

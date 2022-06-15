@@ -5,6 +5,7 @@ import * as sha from 'object-sha';
 import * as bic from 'bigint-conversion';
 import userList from '../data';
 import keys from '../index';
+import User from '../models/users';
 const bitLength = 1024;
 
 export async function generateBothKeys(req: Request, res: Response): Promise<Response>{
@@ -45,4 +46,19 @@ export async function signMsg(req: Request, res: Response): Promise<Response>{
 	const signed: string = await bic.bigintToBase64(privKey.sign(msg))
 
 	return res.status(201).json({signature: signed});
+}
+
+export async function login(req:Request, res: Response): Promise<Response> {
+	const msg = (JSON.parse(JSON.stringify(req.body)));
+	var user: User = new User(msg.username,msg.password);
+	const check = userList.find((obj) => {
+		return obj.username === user.username && obj.password === user.password;
+	})
+	if (check === undefined) {
+		const error = {
+			message: "Login failed"
+		}
+		return res.status(401).json(error);
+	}
+	return res.status(201).json({"message": "login complete"});
 }
