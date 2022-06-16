@@ -80,10 +80,18 @@ function getServerPubK(req, res) {
 exports.getServerPubK = getServerPubK;
 function signMsg(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const msg = req.body;
+        const msg = yield (JSON.parse(JSON.stringify(yield req.body)));
+        console.log("Resumen recibido: " + bic.base64ToBigint(yield msg.message));
         const privKey = yield (yield index_1.default).privateKey;
-        const signed = yield bic.bigintToBase64(privKey.sign(msg));
-        return res.status(201).json({ signature: signed });
+        const sign = privKey.sign(bic.base64ToBigint(msg.message));
+        const signed = bic.bigintToBase64(sign);
+        console.log("Firma completada: " + (yield signed));
+        const json = {
+            message: signed,
+        };
+        console.log((yield index_1.default).publicKey.verify(yield sign));
+        console.log(json);
+        return res.status(201).json(json);
     });
 }
 exports.signMsg = signMsg;

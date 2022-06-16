@@ -41,11 +41,18 @@ export async function getServerPubK(req: Request, res: Response): Promise<Respon
 }
 
 export async function signMsg(req: Request, res: Response): Promise<Response>{
-	const msg = req.body
+	const msg = await (JSON.parse(JSON.stringify(await req.body)));
+	console.log("Resumen recibido: " +bic.base64ToBigint(await msg.message));
 	const privKey: RsaPrivateKey = await (await keys).privateKey;
-	const signed: string = await bic.bigintToBase64(privKey.sign(msg))
-
-	return res.status(201).json({signature: signed});
+	const sign = privKey.sign(bic.base64ToBigint(msg.message));
+	const signed = bic.bigintToBase64(sign);
+	console.log("Firma completada: " + await signed);
+	const json = {
+		message: signed,
+	}
+	console.log((await keys).publicKey.verify(await sign));
+	console.log(json);
+	return res.status(201).json(json);
 }
 
 export async function login(req:Request, res: Response): Promise<Response> {
