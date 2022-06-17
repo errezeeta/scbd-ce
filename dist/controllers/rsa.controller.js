@@ -106,8 +106,10 @@ function login(req, res) {
             const error = {
                 message: "Login failed"
             };
+            console.log("sf");
             return res.status(401).json(error);
         }
+        console.log("TOMAROMAAAA");
         return res.status(201).json({ "message": "login complete" });
     });
 }

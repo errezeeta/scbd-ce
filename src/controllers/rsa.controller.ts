@@ -65,7 +65,9 @@ export async function login(req:Request, res: Response): Promise<Response> {
 		const error = {
 			message: "Login failed"
 		}
+		console.log("Login fallido");
 		return res.status(401).json(error);
 	}
+	console.log("Usuario autorizado")
 	return res.status(201).json({"message": "login complete"});
 }
