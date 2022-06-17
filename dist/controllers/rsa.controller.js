@@ -56,8 +56,8 @@ exports.generateBothKeys = generateBothKeys;
 function getServerPubK(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         //añadir condicion login
-        console.log(req.body);
         const username = req.body;
+        console.log("Vuelvo a checkear si " + JSON.stringify(username) + " existe.\n \n");
         const check = data_1.default.find((obj) => {
             return obj.username === username.username;
         });
@@ -73,6 +73,7 @@ function getServerPubK(req, res) {
                 e: bic.bigintToBase64(yield (yield index_1.default).publicKey.e),
                 n: bic.bigintToBase64(yield (yield index_1.default).publicKey.n)
             };
+            console.log("El usuario existe y le voy a enviar la siguiente clave: \n" + JSON.stringify(key));
             return res.status(201).json(key);
         }
     });
@@ -81,7 +82,7 @@ exports.getServerPubK = getServerPubK;
 function signMsg(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const msg = yield (JSON.parse(JSON.stringify(yield req.body)));
-        console.log("Resumen recibido: " + bic.base64ToBigint(yield msg.message));
+        console.log("Resumen recibido: " + bic.base64ToBigint((yield msg.message) + "\n \n"));
         const privKey = yield (yield index_1.default).privateKey;
         const sign = privKey.sign(bic.base64ToBigint(msg.message));
         const signed = bic.bigintToBase64(sign);
@@ -89,7 +90,6 @@ function signMsg(req, res) {
         const json = {
             message: signed,
         };
-        console.log((yield index_1.default).publicKey.verify(yield sign));
         console.log(json);
         return res.status(201).json(json);
     });
@@ -99,6 +99,7 @@ function login(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const msg = (JSON.parse(JSON.stringify(req.body)));
         var user = new users_1.default(msg.username, msg.password);
+        console.log("El usuario " + JSON.stringify(msg.username) + " está intentando registrarse.");
         const check = data_1.default.find((obj) => {
             return obj.username === user.username && obj.password === user.password;
         });
@@ -106,10 +107,10 @@ function login(req, res) {
             const error = {
                 message: "Login failed"
             };
-            console.log("sf");
+            console.log("Login fallido! :(");
             return res.status(401).json(error);
         }
-        console.log("TOMAROMAAAA");
+        console.log("Usuario autorizado");
         return res.status(201).json({ "message": "login complete" });
     });
 }
